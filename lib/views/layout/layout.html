@@ -216,7 +216,15 @@ gh/highlightjs/cdn-release@9.12.0/build/languages/yaml.min.js
           {% endif %}
         </li>
 
-        <li><a href="#">(TBD) Create /Sidebar</a></li>
+        {% if sidebar !== null %}
+          {{ sidebar.content }}
+        {% else %}
+          <li>
+            <a href="/Sidebar#edit-form">
+              <i class="icon-magic-wand"></i> Create <strong> /Sidebar</strong>
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>
