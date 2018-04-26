@@ -2,6 +2,7 @@ body.on-edit {
 
   // hide unnecessary elements
   .navbar.navbar-static-top,
+  .sidebar,
   .row.row-alerts,
   .row.page-list,
   .row.page-comments-row,
@@ -16,6 +17,11 @@ body.on-edit {
   .authors,
   footer {
     display: none !important;
+  }
+
+  // reset margin for #page-wrapper
+  #page-wrapper {
+    margin-left: 0;
   }
 
   // hide unnecessary elements for growi layout
@@ -338,6 +344,18 @@ body.on-edit {
 }
 .on-edit .nav-tabs-create-portal {
   display: block;
+}
+
+
+/*
+ * for editing /Sidebar
+ */
+.on-edit.growi-sidebar {
+  .page-editor-preview-body {
+    @extend .center-block;
+    padding-top: 0;
+    width: 220px;
+  }
 }
 
 

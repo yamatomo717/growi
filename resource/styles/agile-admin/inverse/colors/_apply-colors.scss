@@ -62,12 +62,15 @@ body{
 
 /*Sidebar*/
 
-.sidebar {
-    background:$sidebar;
-    box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);
+@mixin sidebar-color() {
+  background:$sidebar;
+  box-shadow:1px 0px 20px rgba(0, 0, 0, 0.08);
   .label-custom{
-      background:$megna;
+    background:$megna;
   }
+}
+.sidebar {
+  @include sidebar-color();
 }
 #side-menu li a{
     color:$sidebar-text;
@@ -291,6 +294,16 @@ body.on-edit {
       .page-editor-footer {
         border-top-color: $border;
       }
+    }
+  }
+
+  // editing /Sidebar
+  &.growi-sidebar .main {
+    .page-editor-preview-container {
+      background-color: darken($bodycolor, 2%);
+    }
+    .page-editor-preview-body {
+      @include sidebar-color();
     }
   }
 }

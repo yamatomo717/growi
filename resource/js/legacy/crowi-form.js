@@ -45,6 +45,11 @@
     $('body').removeClass('on-edit');
   });
 
+  // Sidebar
+  if (pagePath === '/Sidebar') {
+    $('body').addClass('growi-sidebar');
+  }
+
 /**
  * DOM ready
  */
