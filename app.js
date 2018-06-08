@@ -5,7 +5,35 @@
  * @author  Yuki Takei <yuki@weseek.co.jp>
  */
 
-var growi = new (require('./lib/crowi'))(__dirname, process.env);
+require('module-alias/register');
+
+const logger = require('@alias/logger')('growi');
+const helpers = require('./config/helpers');
+const growi = new (require('./lib/crowi'))(__dirname, process.env);
+
+
+/************************************
+ *          Main Process
+ ***********************************/
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception: ', err);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  logger.error('Unhandled Rejection: Promise:', p, 'Reason:', reason);
+});
 
 growi.start()
-  .catch(growi.exitOnerror);
+  .then(express => {
+    if (helpers.hasProcessFlag('ci')) {
+      logger.info('"--ci" flag is detected. Exit process.');
+      express.close(() => {
+        process.exit();
+      });
+    }
+  })
+  .catch(err => {
+    logger.error('An error occurred, unable to start the server');
+    logger.error(err);
+    process.exit(1);
+  });

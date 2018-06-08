@@ -1,9 +1,15 @@
 <div class="row row-alerts">
   <div class="col-xs-12">
     {% if page && page.grant != 1 %}
-    <p class="alert alert-inverse alert-grant">
-      <i class="icon-fw icon-lock"></i><strong>{{ consts.pageGrants[page.grant] }}</strong> ({{ t('Browsing of this page is restricted') }})
-    </p>
+      <p class="alert alert-inverse alert-grant">
+      {% if page.grant == 2 %}
+        <i class="icon-fw icon-link"></i><strong>{{ consts.pageGrants[page.grant] }}</strong> ({{ t('Browsing of this page is restricted') }})
+      {% elseif page.grant == 4 %}
+        <i class="icon-fw icon-lock"></i><strong>{{ consts.pageGrants[page.grant] }}</strong> ({{ t('Browsing of this page is restricted') }})
+      {% elseif page.grant == 5 %}
+        <i class="icon-fw icon-organization"></i><strong>'{{ pageRelatedGroup.name }}' only</strong> ({{ t('Browsing of this page is restricted') }})
+      {% endif %}
+      </p>
     {% endif %}
 
     {% if page.isDeleted() %}
@@ -29,7 +35,7 @@
     {% if req.query.renamed and not page.isDeleted() %}
     <div class="alert alert-info alert-moved">
       <span>
-        <strong>{{ t('Moved') }}: </strong> {{ t('page_page.notice.moved', req.query.renamed) }}
+        <strong>{{ t('Moved') }}: </strong> {{ t('page_page.notice.moved', req.sanitize(req.query.renamed)) }}
       </span>
     </div>
     {% endif %}
@@ -37,7 +43,7 @@
     {% if req.query.redirectFrom and not page.isDeleted() %}
     <div class="alert alert-info alert-moved d-flex align-items-center justify-content-between">
       <span>
-        <strong>{{ t('Moved') }}: </strong> {{ t('page_page.notice.moved', req.query.redirectFrom) }}
+        <strong>{{ t('Moved') }}: </strong> {{ t('page_page.notice.moved', req.sanitize(req.query.redirectFrom)) }}
       </span>
       {% if user %}
       <form role="form" id="unlink-page-form" onsubmit="return false;">
@@ -56,7 +62,7 @@
     {% if req.query.duplicated and not page.isDeleted() %}
     <div class="alert alert-success alert-moved">
       <span>
-        <strong>{{ t('Duplicated') }}: </strong> {{ t('page_page.notice.duplicated', req.query.duplicated) }}
+        <strong>{{ t('Duplicated') }}: </strong> {{ t('page_page.notice.duplicated', req.sanitize(req.query.duplicated)) }}
       </span>
     </div>
     {% endif %}
@@ -71,6 +77,13 @@
     <div class="alert alert-warning">
       <strong>{{ t('Warning') }}: </strong> {{ t('page_page.notice.version') }}
       <a href="{{ page.path }}"><i class="icon-fw icon-arrow-right-circle"></i>{{ t('Show latest') }}</a>
+    </div>
+    {% endif %}
+
+    {% set dmessage = req.flash('dangerMessage') %}
+    {% if dmessage.length %}
+    <div class="alert alert-danger m-b-15">
+      {{ dmessage }}
     </div>
     {% endif %}
   </div>

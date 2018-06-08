@@ -28,7 +28,7 @@
 
         <form class="row form-horizontal m-t-15" id="create-page-under-tree" role="form">
           <fieldset class="col-xs-12">
-            <legend>{{ t('Create under', parentPath(path)) }}</legend>
+            <legend>{{ t('Create under') }}</legend>
             <div class="d-flex create-page-input-container">
               <div class="create-page-input-row d-flex align-items-center">
                 {% if searchConfigured() %}
@@ -44,8 +44,59 @@
           </fieldset>
         </form>
 
+        <div id="template-form" class="row form-horizontal m-t-15">
+          <fieldset class="col-xs-12">
+            <legend>{{ t('template.modal_label.Create template under', parentPath(path)) }}</legend>
+            <div class="d-flex create-page-input-container">
+              <div class="create-page-input-row d-flex align-items-center">
+                <select id="template-type" class="form-control selectpicker" title="{{ t('template.option_label.select') }}">
+                  <option value="children" data-subtext="- {{ t('template.children.desc') }}">{{ t('template.children.label') }}(_template)</option>
+                  <option value="decentants" data-subtext="- {{ t('template.decendants.desc') }}">{{ t('template.decendants.label') }}(__template)</option>
+                </select>
+              </div>
+              <div class="create-page-button-container">
+                <a id="link-to-template" href="{{ page.path || path }}" class="fcbtn btn btn-outline btn-rounded btn-primary btn-1b disabled">
+                  <i class="icon-fw icon-doc"></i>
+                  <span id="create-template-button-link">{{ t('Create') }}/{{ t('Edit') }}</span>
+                </a>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
       </div><!-- /.modal-body -->
 
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<script>
+  let buttonTextChildren;
+  let buttonTextDecendants;
+  let pagePath = $("#link-to-template").attr("href");
+
+  if (pagePath.endsWith("/")) {
+      pagePath = pagePath.slice(0, -1);
+  };
+
+  $.get(`/_api/pages.templates?path=${pagePath}`)
+    .then(templateInfo => {
+      buttonTextChildren = templateInfo.childrenTemplateExists ? `{{ t('Edit') }}` : `{{ t('Create') }}`;
+      buttonTextDecendants = templateInfo.decendantsTemplateExists ? `{{ t('Edit') }}` : `{{ t('Create') }}`;
+    });
+
+  $("#template-type").on("change", () => {
+    // enable button
+    $('#link-to-template').removeClass("disabled");
+
+    if ($("#template-type").val() === "children") {
+      href = pagePath + "/_template#edit-form";
+      $("#link-to-template").attr("href", href);
+      $('#create-template-button-link').text(buttonTextChildren);
+    }
+    else if ($("#template-type").val() === "decentants") {
+      href = pagePath + "/__template#edit-form";
+      $("#link-to-template").attr("href", href);
+      $('#create-template-button-link').text(buttonTextDecendants);
+    };
+  });
+</script>

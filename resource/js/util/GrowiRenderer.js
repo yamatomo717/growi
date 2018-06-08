@@ -1,20 +1,21 @@
 import MarkdownIt from 'markdown-it';
-import * as entities from 'entities';
+import xss from 'xss';
 
 import Linker        from './PreProcessor/Linker';
 import CsvToTable    from './PreProcessor/CsvToTable';
 import XssFilter     from './PreProcessor/XssFilter';
+import CrowiTemplate from './PostProcessor/CrowiTemplate';
 
-import Template from './LangProcessor/Template';
-
-import CommonPluginsConfigurer from './markdown-it/common-plugins';
 import EmojiConfigurer from './markdown-it/emoji';
+import FooternoteConfigurer from './markdown-it/footernote';
 import HeaderLineNumberConfigurer from './markdown-it/header-line-number';
 import HeaderConfigurer from './markdown-it/header';
 import MathJaxConfigurer from './markdown-it/mathjax';
 import PlantUMLConfigurer from './markdown-it/plantuml';
 import TableConfigurer from './markdown-it/table';
+import TaskListsConfigurer from './markdown-it/task-lists';
 import TocAndAnchorConfigurer from './markdown-it/toc-and-anchor';
+import BlockdiagConfigurer from './markdown-it/blockdiag';
 
 export default class GrowiRenderer {
 
@@ -31,6 +32,8 @@ export default class GrowiRenderer {
       { isAutoSetup: true },      // default options
       options || {});             // specified options
 
+    this.xssFilterForCode = new xss.FilterXSS();
+
     // initialize processors
     //  that will be retrieved if originRenderer exists
     this.preProcessors = this.originRenderer.preProcessors || [
@@ -39,11 +42,8 @@ export default class GrowiRenderer {
       new XssFilter(crowi),
     ];
     this.postProcessors = this.originRenderer.postProcessors || [
+      new CrowiTemplate(crowi),
     ];
-
-    this.langProcessors = this.originRenderer.langProcessors || {
-      'template': new Template(crowi),
-    };
 
     this.initMarkdownItConfigurers = this.initMarkdownItConfigurers.bind(this);
     this.setup = this.setup.bind(this);
@@ -70,12 +70,13 @@ export default class GrowiRenderer {
     this.isMarkdownItConfigured = false;
 
     this.markdownItConfigurers = [
-      new CommonPluginsConfigurer(crowi),
+      new TaskListsConfigurer(crowi),
       new HeaderConfigurer(crowi),
       new TableConfigurer(crowi),
       new EmojiConfigurer(crowi),
       new MathJaxConfigurer(crowi),
       new PlantUMLConfigurer(crowi),
+      new BlockdiagConfigurer(crowi),
     ];
 
     // add configurers according to mode
@@ -83,13 +84,19 @@ export default class GrowiRenderer {
     switch (mode) {
       case 'page':
         this.markdownItConfigurers = this.markdownItConfigurers.concat([
+          new FooternoteConfigurer(crowi),
           new TocAndAnchorConfigurer(crowi, options.renderToc),
           new HeaderLineNumberConfigurer(crowi),
         ]);
         break;
       case 'editor':
         this.markdownItConfigurers = this.markdownItConfigurers.concat([
+          new FooternoteConfigurer(crowi),
           new HeaderLineNumberConfigurer(crowi)
+        ]);
+        break;
+      case 'comment':
+        this.markdownItConfigurers = this.markdownItConfigurers.concat([
         ]);
         break;
       default:
@@ -140,28 +147,31 @@ export default class GrowiRenderer {
   }
 
   codeRenderer(code, langExt) {
+    const config = this.crowi.getConfig();
+    const noborder = (!config.highlightJsStyleBorder) ? 'hljs-no-border' : '';
+
     if (langExt) {
       const langAndFn = langExt.split(':');
       const lang = langAndFn[0];
       const langFn = langAndFn[1] || null;
 
-      // process langProcessors
-      if (this.langProcessors[lang] != null) {
-        return this.langProcessors[lang].process(code, langExt);
-      }
-
       const citeTag = (langFn) ? `<cite>${langFn}</cite>` : '';
       if (hljs.getLanguage(lang)) {
         try {
-          return `<pre class="hljs">${citeTag}<code class="language-${lang}">${hljs.highlight(lang, code, true).value}</code></pre>`;
-        } catch (__) {}
+          return `<pre class="hljs ${noborder}">${citeTag}<code class="language-${lang}">${hljs.highlight(lang, code, true).value}</code></pre>`;
+        }
+        catch (__) {
+          return `<pre class="hljs ${noborder}">${citeTag}<code class="language-${lang}">${code}}</code></pre>`;
+        }
       }
       else {
-        return `<pre class="hljs">${citeTag}<code>${code}</code></pre>`;
+        const escapedCode = this.xssFilterForCode.process(code);
+        return `<pre class="hljs ${noborder}">${citeTag}<code>${escapedCode}</code></pre>`;
       }
     }
 
-    return `<pre class="hljs"><code>${code}</code></pre>`;
+    const escapedCode = this.xssFilterForCode.process(code);
+    return `<pre class="hljs ${noborder}"><code>${escapedCode}</code></pre>`;
   }
 
 }

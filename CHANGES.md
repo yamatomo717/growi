@@ -1,11 +1,117 @@
 CHANGES
 ========
 
-## 3.0.11-RC
+## 3.1.6-RC
 
+* (WIP) Feature: Support [blockdiag](http://blockdiag.com)
+* Feature: Add `BLOCKDIAG_URI` environment variable
+
+## 3.1.5
+
+* Feature: Write comment with Markdown
+* Improvement: Support some placeholders for template page
+* Improvement: Omit unnecessary response header
+* Improvement: Support LDAP attribute mappings for user's full name
+* Improvement: Enable to scroll revision-toc
+* Fix: Posting to Slack doesn't work
+    * Introduced by 3.1.0
+* Fix: page.rename api doesn't work
+* Fix: HTML escaped characters in markdown are unescaped unexpectedly after page is saved
+* Fix: sanitize `#raw-text-original` content with 'entities'
+* Fix: Double newline character posted
+    * Introduced by 3.1.4
+* Fix: List and Comment components do not displayed
+    * Introduced by 3.1.4
+* Support: Upgrade libs
+    * markdown-it-toc-and-anchor-with-slugid
+
+
+## 3.1.4 (Missing number)
+
+## 3.1.3 (Missing number)
+
+
+## 3.1.2
+
+* Feature: Template page
+* Improvement: Add 'future' theme
+* Improvement: Modify syntax for Crowi compatible template feature
+    * *before*
+        ~~~
+        ``` template:/page/name
+        page contents
+        ```
+        ~~~
+    * *after*
+        ~~~
+        ::: template:/page/name
+        page contents
+        :::
+        ~~~
+* Improvement: Escape iframe tag in block codes
+* Support: Upgrade libs
+    * assets-webpack-plugin
+    * googleapis
+    * react-clipboard.js
+    * xss
+
+## 3.1.1
+
+* Improvement: Add 'blue-night' theme
+* Improvement: List up pages which restricted for Group ACL
+* Fix: PageGroupRelation didn't remove when page is removed completely
+
+
+## 3.1.0
+
+* Improvement: Group Access Control List - Select group modal
+* Improvement: Better input on mobile
+* Improvement: Detach code blocks correctly
+* Improvement: Auto-format markdown table which includes multibyte text
+* Improvement: Show icon when auto-format markdown table is activated
+* Improvement: Enable to switch show/hide border for highlight.js
+* Improvement: BindDN field allows also ActiveDirectory styles 
+* Improvement: Show LDAP logs when testing login
+* Fix: Comment body doesn't break long terms
+* Fix: lsx plugin lists up pages that hit by forward match wrongly
+    * Introduced by 3.0.4
+* Fix: Editor is broken on IE11
+* Support: Multilingualize React components with i18next
+* Support: Organize dependencies
+* Support: Upgrade libs
+    * elasticsearch
+    * googleapis
+
+## 3.0.13
+
+* Improvement: Add Vim/Emacs/Sublime-Text icons for keybindings menu
+* Improvement: Add 'mono-blue' theme
+* Fix: Unportalize process failed silently
+* Fix: Sidebar breaks editor layouts
+* Support: Switch the logger from 'pino' to 'bunyan'
+* Support: Set the alias for 'debug' to the debug function of 'bunyan'
+* Support: Translate /admin/security
+* Support: Optimize bundles
+    * upgrade 'markdown-it-toc-and-anchor-with-slugid' and omit 'uslug'
+* Support: Optimize .eslintrc.js
+
+## 3.0.12
+
+* Feature: Support Vim/Emacs/Sublime-Text keybindings
+* Improvement: Add some CodeMirror themes (Eclipse, Dracula)
+* Improvement: Dynamic loading for CodeMirror theme files from CDN
+* Improvement: Prevent XSS when move/redirect/duplicate
+
+## 3.0.11
+
+* Fix: login.html is broken in iOS
+* Fix: Removing attachment is crashed
+* Fix: File-attaching error after new page creation
 * Support: Optimize development build
 * Support: Upgrade libs
     * env-cmd
+    * googleapis
+    * sinon
 
 ## 3.0.10
 

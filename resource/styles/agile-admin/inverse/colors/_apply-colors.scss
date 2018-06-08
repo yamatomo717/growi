@@ -152,6 +152,15 @@ body{
 }
 
 /*
+ * code color of inline-code
+ */
+:not(.hljs) > code:not(.hljs) {
+  color: $inline-code-color;
+  background-color: $inline-code-bg;
+}
+
+
+/*
  * Legend
  */
 legend {
@@ -284,7 +293,7 @@ body.on-edit {
     background-color: darken($bodycolor, 2%);
 
     .page-editor-editor-container {
-      border-right-color: $border;
+      border-right-color: $navbar-border;
     }
     .page-editor-preview-container {
       background-color: $bodycolor;
@@ -316,10 +325,17 @@ body.on-edit {
     border-top-color: $border;
   }
   .page-comment .page-comment-main,
-  .comment-form-main {
+  .page-comment-form .comment-form-main {
     background-color: darken($bodycolor, 4%);
     &:before {
       border-right-color: darken($bodycolor, 4%);
+    }
+    .nav.nav-tabs {
+      > li.active > a {
+        background: transparent;
+        border-bottom: solid 1px darken($bodycolor, 4%);
+        border-bottom-color: darken($bodycolor, 4%);
+      }
     }
   }
 }
