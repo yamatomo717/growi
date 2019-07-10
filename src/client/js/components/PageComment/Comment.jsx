@@ -34,6 +34,7 @@ class Comment extends React.Component {
     this.getRootClassName = this.getRootClassName.bind(this);
     this.getRevisionLabelClassName = this.getRevisionLabelClassName.bind(this);
     this.deleteBtnClickedHandler = this.deleteBtnClickedHandler.bind(this);
+    this.editBtnClickedHandler = this.editBtnClickedHandler.bind(this);
     this.renderText = this.renderText.bind(this);
     this.renderHtml = this.renderHtml.bind(this);
   }
@@ -77,6 +78,10 @@ class Comment extends React.Component {
 
   deleteBtnClickedHandler() {
     this.props.deleteBtnClicked(this.props.comment);
+  }
+
+  editBtnClickedHandler() {
+    this.props.editBtnClicked();
   }
 
   renderText(comment) {
@@ -238,6 +243,9 @@ class Comment extends React.Component {
                 <a className={revisionLavelClassName} href={revHref}>{revFirst8Letters}</a>
               </div>
               <div className="page-comment-control">
+                <button type="button" className="btn btn-link" onClick={this.editBtnClickedHandler}>
+                  <i className="ti-pencil"></i>
+                </button>
                 <button type="button" className="btn btn-link" onClick={this.deleteBtnClickedHandler}>
                   <i className="ti-close"></i>
                 </button>
@@ -270,6 +278,7 @@ Comment.propTypes = {
   comment: PropTypes.object.isRequired,
   growiRenderer: PropTypes.object.isRequired,
   deleteBtnClicked: PropTypes.func.isRequired,
+  editBtnClicked: PropTypes.func.isRequired,
   replyList: PropTypes.array,
 };
 
